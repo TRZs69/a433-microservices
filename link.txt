@@ -1,0 +1,2 @@
+https://github.com/users/trzs69/packages/container/item-app
+ghcr.io/trzs69/item-app:v1

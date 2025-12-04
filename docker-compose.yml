@@ -1,0 +1,45 @@
+
+# Menggunakan Docker Compose versi 3.8 (>= 2 sesuai ketentuan)
+version: "3.8"
+
+services:
+  # Service aplikasi utama item-app
+  item-app:
+    # Menggunakan image item-app dari GitHub Packages (GHCR)
+    # Ganti <username_github_kamu> dengan username GitHub kamu
+    image: ghcr.io/trzs69/item-app:v1
+    container_name: item-app
+
+    # Mapping port: port 80 di host -> port 8080 di container
+    ports:
+      - "80:8080"
+
+    # Environment di dalam container agar aplikasi tahu environment & DB host
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=item-db
+
+    # Pastikan item-app hanya berjalan setelah item-db diluncurkan
+    depends_on:
+      - item-db
+
+    # Restart policy: container akan selalu mencoba restart jika terhenti
+    restart: always
+
+  # Service database MongoDB
+  item-db:
+    # Menggunakan image mongo versi 3 dari Docker Hub sesuai ketentuan
+    image: mongo:3
+    container_name: item-db
+
+    # Menggunakan volume bernama app-db dengan target /data/db di container
+    volumes:
+      - app-db:/data/db
+
+    # Restart policy untuk MongoDB
+    restart: always
+
+# Mendefinisikan volume bernama app-db
+volumes:
+  app-db:
+    # Menggunakan konfigurasi default untuk named volume

@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node ./node_modules/gulp/bin/gulp.js",
+    "build": "echo \"skip gulp build on Node 14\"",
     "start": "node ./bin/www",
     "stop": "pkill -SIGINT ca-app",
     "test": "karma start",
     "preinstall": "npx npm-force-resolutions"
   },
   "resolutions": {
-    "graceful-fs": "^4.2.4"
+    "graceful-fs": "4.2.4"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
