@@ -2,13 +2,15 @@ version: 2.1
 
 jobs:
   lint-dockerfile:
-    docker:
-      - image: hadolint/hadolint:latest
+    machine: true
     steps:
       - checkout
       - run:
+          name: Install hadolint
+          command: curl -s https://raw.githubusercontent.com/hadolint/hadolint/master/install.sh | bash
+      - run:
           name: Lint Dockerfile
-          command: hadolint Dockerfile
+          command: ./hadolint Dockerfile
 
   test-app:
     docker:
@@ -16,38 +18,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Run Go Unit Tests
-          command: |
-            go test -v -short --count=1 $(go list ./...)
+          name: Run Go Tests
+          command: go test -v -short --count=1 $(go list ./...)
 
   build-app-karsajobs:
-    docker:
-      - image: docker:latest
+    machine: true
     steps:
       - checkout
-      - setup_remote_docker
       - run:
-          name: Login to GHCR
-          command: |
-            echo "$GHCR_PAT" | docker login ghcr.io -u "$DOCKER_USERNAME" --password-stdin
-      - run:
-          name: Build Docker image
-          command: |
-            docker build -t ghcr.io/trzs69/karsajobs:latest .
-      - run:
-          name: Push Docker image
-          command: |
-            docker push ghcr.io/trzs69/karsajobs:latest
+          name: Login GHCR
+          command: echo "$GHCR_PAT" | docker login ghcr.io -u "$DOCKER_USERNAME" --password-stdin
 
-workflows:
-  version: 2
-  main:
-    jobs:
-      - lint-dockerfile
-      - test-app:
-          requires:
-            - lint-dockerfile
-      - build-app-karsajobs:
-          requires:
-            - test-app
+      - run:
+          name: Build image
 
