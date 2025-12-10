@@ -8,7 +8,8 @@ jobs:
       - run:
           name: Install hadolint
           command: |
-            curl -s https://raw.githubusercontent.com/hadolint/hadolint/master/install.sh | bash
+            curl -L https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o hadolint
+            chmod +x hadolint
       - run:
           name: Lint Dockerfile
           command: ./hadolint Dockerfile
@@ -18,19 +19,15 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Docker login GHCR
+          name: Login GHCR
           command: |
             echo "$GHCR_PAT" | docker login ghcr.io -u "$DOCKER_USERNAME" --password-stdin
-
       - run:
           name: Build Docker image
-          command: |
-            docker build -t ghcr.io/trzs69/karsajobs-ui:latest .
-
+          command: docker build -t ghcr.io/trzs69/karsajobs-ui:latest .
       - run:
           name: Push Docker image
-          command: |
-            docker push ghcr.io/trzs69/karsajobs-ui:latest
+          command: docker push ghcr.io/trzs69/karsajobs-ui:latest
 
 workflows:
   version: 2
